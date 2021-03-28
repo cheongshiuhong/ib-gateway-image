@@ -6,13 +6,16 @@ RUN  apt-get update \
   && apt-get install -y wget unzip xvfb libxtst6 libxrender1 python3.7-dev build-essential net-tools
 
 # set environment variables
+ARG TRADING_MODE
 ARG TWSUSERID
+ARG TWSPASSWORD
 ENV TWS_INSTALL_LOG=/root/Jts/tws_install.log \
     ibcIni=/root/ibc/config.ini \
     ibcPath=/opt/ibc \
     javaPath=/opt/i4j_jres \
     twsPath=/root/Jts \
     twsSettingsPath=/root/Jts \
+    TRADING_MODE=${TRADING_MODE} \
     TWSUSERID=${TWSUSERID} \
     TWSPASSWORD=${TWSPASSWORD}
 
