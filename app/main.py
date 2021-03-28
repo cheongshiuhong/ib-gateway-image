@@ -7,6 +7,11 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
+    print('DB USER:', os.environ.get('DB_USER'))
+    print('DB PASS:', os.environ.get('DB_PASS'))
+    print('DB NAME:', os.environ.get('DB_NAME'))
+    print('DB SOCKET DIR:'. os.environ.get('DB_SOCKET_DIR', '/cloudsql'))
+    print('CLOUD SQL CONNECTION NAME:'. os.environ.get('CLOUD_SQL_CONNECTION_NAME'))
     return {'Test': 'It works!'}
 
 @app.route('/run')
