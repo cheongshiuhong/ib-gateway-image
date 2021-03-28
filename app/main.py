@@ -8,11 +8,11 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     data = {
-        'DB USER:', os.environ.get('DB_USER')
-        'DB PASS:', os.environ.get('DB_PASS')
-        'DB NAME:', os.environ.get('DB_NAME')
-        'DB SOCKET DIR:', os.environ.get('DB_SOCKET_DIR', '/cloudsql')
-        'CLOUD SQL CONNECTION NAME:', os.environ.get('CLOUD_SQL_CONNECTION_NAME')
+        'DB USER': os.environ.get('DB_USER'),
+        'DB PASS': os.environ.get('DB_PASS'),
+        'DB NAME': os.environ.get('DB_NAME'),
+        'DB SOCKET DIR': os.environ.get('DB_SOCKET_DIR', '/cloudsql'),
+        'CLOUD SQL CONNECTION NAME': os.environ.get('CLOUD_SQL_CONNECTION_NAME')
     }
     return {'Test': 'It works!', 'data': data}
 
