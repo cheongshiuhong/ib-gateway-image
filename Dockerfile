@@ -6,18 +6,12 @@ RUN  apt-get update \
   && apt-get install -y wget unzip xvfb libxtst6 libxrender1 python3.7-dev build-essential net-tools
 
 # set environment variables
-ARG TRADING_MODE
-ARG TWSUSERID
-ARG TWSPASSWORD
 ENV TWS_INSTALL_LOG=/root/Jts/tws_install.log \
     ibcIni=/root/ibc/config.ini \
     ibcPath=/opt/ibc \
     javaPath=/opt/i4j_jres \
     twsPath=/root/Jts \
-    twsSettingsPath=/root/Jts \
-    TRADING_MODE=${TRADING_MODE} \
-    TWSUSERID=${TWSUSERID} \
-    TWSPASSWORD=${TWSPASSWORD}
+    twsSettingsPath=/root/Jts
 
 # make dirs
 RUN mkdir -p /tmp && mkdir -p ${ibcPath} && mkdir -p ${twsPath}
@@ -48,18 +42,14 @@ RUN pip install -r requirements.txt
 # cd into home directory to setup
 WORKDIR /home
 
-# copy app and lib
-COPY ./app.py app.py
-COPY ./py py 
+# copy app
+ADD ./app .
 
 # copy entrypoint script
 COPY entrypoint.sh entrypoint.sh
 RUN chmod +x entrypoint.sh
 
-
 # set display environment variable (must be set after TWS installation)
 ENV DISPLAY=:0
 
 CMD bash entrypoint.sh
-
-# CMD tail -f /dev/null

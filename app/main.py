@@ -1,7 +1,7 @@
 import os
 import re
 from flask import Flask
-from py.ibgw import IBGW
+from utils.ibgw import IBGW
 
 app = Flask(__name__)
 
@@ -34,6 +34,7 @@ def run():
     # Connect
     try:
         ibgw.start_and_connect()
+        ibgw.stop_and_terminate()
         return {'Success': 'Connected to IB Gateway.'}
     except TimeoutError:
         return {'Timeout Error': 'Could not connect to IB Gateway.'}

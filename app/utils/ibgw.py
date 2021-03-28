@@ -7,10 +7,11 @@ util.logToConsole()
 
 class IBGW(IB):
 
-    def __init__(self, ibc_config, ib_config={}, connection_timeout=60):
+    def __init__(self, ibc_config, ib_config={}, connection_timeout=60, per_sleep=2):
         self.ibc_config = ibc_config
         self.ib_config = {'host': '127.0.0.1', 'port': 4001, 'clientId': 1, **ib_config}
         self.connection_timeout = connection_timeout
+        self.per_sleep = per_sleep
 
         self.ibc = IBC(**self.ibc_config)
         super().__init__()
@@ -27,8 +28,8 @@ class IBGW(IB):
         try:
             while not self.isConnected():
                 # retry until connection is established or timeout is reached
-                IB.sleep(1)
-                wait -= 1
+                IB.sleep(self.per_sleep)
+                wait -= self.per_sleep
                 logging.info('Connecting to IB gateway...')
                 try:
                     self.connect(**self.ib_config)
