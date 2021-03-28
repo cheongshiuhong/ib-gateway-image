@@ -16,14 +16,16 @@ def run():
         install_log = fp.read()
 
     ibc_config = {
+        # Provided on Docker build
         'twsVersion': re.search('IB Gateway ([0-9]{3})', install_log).group(1),
         'gateway': True,
-        'tradingMode': 'paper',
         'ibcIni': os.environ.get('ibcIni'),
         'ibcPath': os.environ.get('ibcPath'),
         'javaPath': os.environ.get('javaPath') + f'/{os.listdir(os.environ.get("javaPath"))[0]}/bin',
         'twsPath': os.environ.get('twsPath'),
         'twsSettingsPath': os.environ.get('twsSettingsPath'),
+        # Provided by Cloud Run
+        'tradingMode': os.environ.get('TRADING_MODE'),
         'userid': os.environ.get('TWSUSERID'),
         'password': os.environ.get('TWSPASSWORD')
     }

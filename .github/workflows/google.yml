@@ -5,16 +5,13 @@ on:
     branches:
       - main
 
-# Environment variables for all jobs
+# Environment variables for shell commands
 env:
   GITHUB_SHA: ${{ github.sha }}
   GITHUB_REF: ${{ github.ref }}
   REGISTRY_HOSTNAME: asia.gcr.io
   GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
-  IMAGE: ib-gateway
-  TWSUSERID: ${{ secrets.TWSUSERID }}
-  TWSPASSWORD: ${{ secrets.TWSPASSWORD }}
-  TRADING_MODE: ${{ secrets.TRADING_MODE }}
+  IMAGE: ${{ secrets.IMAGE }}
 
 jobs:
   setup-build-publish-to-gcr:
@@ -42,9 +39,6 @@ jobs:
           export TAG=`echo $GITHUB_REF | awk -F/ '{print $NF}'`
           echo $TAG
           docker build -t "$REGISTRY_HOSTNAME"/"$GOOGLE_PROJECT_ID"/"$IMAGE":"$TAG" \
-            --build-arg TWSUSERID="$TWSUSERID" \
-            --build-arg TWSPASSWORD="$TWSPASSWORD" \
-            --build-arg TRADING_MODE="$TRADING_MODE" \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
             --build-arg GITHUB_REF="$GITHUB_REF" .
       

@@ -4,6 +4,5 @@ services:
     build: .
     ports:
       - "8080:8080"
-      - "5900:5900"
     env_file:
       - ./.env
