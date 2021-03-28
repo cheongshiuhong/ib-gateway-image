@@ -1,0 +1,59 @@
+name: Build and Push to Google Container Registry
+
+on:
+  push:
+    branches:
+      - main
+
+# Environment variables for all jobs
+env:
+  GITHUB_SHA: ${{ github.sha }}
+  GITHUB_REF: ${{ github.ref }}
+  REGISTRY_HOSTNAME: asia.gcr.io
+  GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+  IMAGE: ib-gateway
+  TWSUSERID: ${{ secrets.TWSUSERID }}
+  TWSPASSWORD: ${{ secrets.TWSPASSWORD }}
+  TRADING_MODE: ${{ secrets.TRADING_MODE }}
+
+jobs:
+  setup-build-publish-to-gcr:
+    name: Setup, Build and Publish to GCR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      # Setup GCloud CLI
+      - name: Setup GCloud CLI
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          version: "270.0.0"
+          service_account_key: ${{ secrets.GCR_KEY }}
+      
+      # Configure Docker to use GCloud command line tool as credential helper
+      - name: Configure Docker to use GCloud CLI as credential helper
+        run: |
+          gcloud auth configure-docker
+      
+      # Build the Docker image
+      - name: Build
+        run: |
+          export TAG=`echo $GITHUB_REF | awk -F/ '{print $NF}'`
+          echo $TAG
+          docker build -t "$REGISTRY_HOSTNAME"/"$GOOGLE_PROJECT_ID"/"$IMAGE":"$TAG" \
+            --build-arg TWSUSERID="$TWSUSERID" \
+            --build-arg TWSPASSWORD="$TWSPASSWORD" \
+            --build-arg TRADING_MODE="$TRADING_MODE" \
+            --build-arg GITHUB_SHA="$GITHUB_SHA" \
+            --build-arg GITHUB_REF="$GITHUB_REF" .
+      
+      # Push to Docker image to Google Container Registry
+      - name: Publish
+        run: |
+          export TAG=`echo $GITHUB_REF | awk -F/ '{print $NF}'`
+          echo $TAG
+          docker push "$REGISTRY_HOSTNAME"/"$GOOGLE_PROJECT_ID"/"$IMAGE":"$TAG"
+          docker tag "$REGISTRY_HOSTNAME"/"$GOOGLE_PROJECT_ID"/"$IMAGE":"$TAG" \
+            "$REGISTRY_HOSTNAME"/"$GOOGLE_PROJECT_ID"/"$IMAGE":latest
+          docker push "$REGISTRY_HOSTNAME"/"$GOOGLE_PROJECT_ID"/"$IMAGE":latest
