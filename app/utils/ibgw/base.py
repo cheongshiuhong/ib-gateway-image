@@ -1,13 +1,11 @@
 from ib_insync import IB, IBC, util
 import logging
 
-
 util.logToConsole()
 
+class IBGWBase(IB):
 
-class IBGW(IB):
-
-    def __init__(self, ibc_config, ib_config={}, connection_timeout=60, per_sleep=2):
+    def __init__(self, ibc_config, ib_config, connection_timeout, per_sleep):
         self.ibc_config = ibc_config
         self.ib_config = {'host': '127.0.0.1', 'port': 4001, 'clientId': 1, **ib_config}
         self.connection_timeout = connection_timeout
@@ -61,3 +59,30 @@ class IBGW(IB):
         self.ibc.terminate()
         self.sleep(wait)
         logging.info('Done.')
+
+    def pipe(self, funcs):
+        """
+        Runs functions sequentially
+
+        :param funcs: list of functions to execute sequentially
+        :returns: the output object from the last function
+        """
+        # Start and Connect
+        try: self.start_and_connect()
+        except TimeoutError as e: return {'Timeout Error': str(e)}
+
+        # Run Functions
+        try:
+            output = {}
+            for i, func in enumerate(funcs):
+                output = func(output)
+        except Exception as e:
+            output = {
+                'Pipeline Error': f'Function with index {i} failed to execute: {e}',
+                'output': output
+            }
+
+        # End Connection and Exit
+        self.stop_and_terminate()
+        return output
+        
