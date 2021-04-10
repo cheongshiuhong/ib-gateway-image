@@ -45,6 +45,9 @@ WORKDIR /home
 # copy app
 ADD ./app .
 
+# copy google credentials file for db
+COPY credentials.json credentials.json
+
 # copy entrypoint script
 COPY entrypoint.sh entrypoint.sh
 RUN chmod +x entrypoint.sh
