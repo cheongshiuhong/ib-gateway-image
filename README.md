@@ -1,6 +1,5 @@
 # IB Gateway Image
-### Terraform GCP Infrastructure 
-### IB Gateway Docker Container
+### Terraform GCP Infrastructure | IB Gateway Docker Container
 
 ### Setup GCP Project:
 - Create a project on GCP Console
