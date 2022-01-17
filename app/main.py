@@ -6,6 +6,7 @@ from lib.db import DbClient
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def home():
     data = {}
@@ -44,16 +45,18 @@ def screen():
     return {'screen': 'screen'}
 
 # ----------------------------------------------------
-# HMMW route to trade with Hidden Markov Model
+# Trade route to trade
 # ----------------------------------------------------
-@app.route('/trade-hmmw')
-def trade_hmmw():
+@app.route('/trade')
+def trade():
     # Initialize
     client = TradeClient(IBC_CONFIG)
     client.start_and_connect()
+    # Execute trades
+    ...
     client.stop_and_terminate()
 
-    return { 'trade': 'trade-hmmw' }
+    return { 'trade': 'trade' }
 
 # ----------------------------------------------------
 # Reconcilate route to reconciliate account stats
