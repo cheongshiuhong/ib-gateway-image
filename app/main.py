@@ -53,7 +53,7 @@ def trade_hmmw():
     client.start_and_connect()
     client.stop_and_terminate()
 
-    return { 'trade': 'hmmwtrade' }
+    return { 'trade': 'trade-hmmw' }
 
 # ----------------------------------------------------
 # Reconcilate route to reconciliate account stats

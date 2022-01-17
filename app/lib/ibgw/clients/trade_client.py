@@ -14,7 +14,7 @@ class TradeClient(IBGWBase):
 
         :param state.ticker: ticker of the stock to trade
         :param state.exchange: exchange to trade on
-        :param state.action: BUY or SELL
+        :param state.action: whether to BUY or SELL
         :param state.qty: number of stocks to trade
         """
 

@@ -8,8 +8,8 @@ class ReconClient(IBGWBase):
         'NetLiquidationByCurrency',
         'CashBalance',
         'StockMarketValue',
-        'RealizedPnL',
-        'UnrealizedPnL'
+        'UnrealizedPnL',
+        'RealizedPnL'
     ]
 
     def __init__(self, ibc_config, ib_config={}, connection_timeout=90, per_sleep=2):

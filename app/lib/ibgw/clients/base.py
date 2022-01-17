@@ -4,9 +4,9 @@ from ib_insync import IB, IBC, util
 util.logToConsole()
 
 class IBGWBase(IB):
-    CURR = 'USD'
-    BUY = 'BUY'
-    SELL = 'SELL'
+    CURR  = 'USD'
+    BUY   = 'BUY'
+    SELL  = 'SELL'
 
     def __init__(self, ibc_config, ib_config, connection_timeout, per_sleep):
         self.ibc_config = ibc_config
