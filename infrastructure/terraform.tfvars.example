@@ -1,3 +1,4 @@
+# Input variables and rename this file to [terraform.tfvars]
 project                = ""
 location               = ""
 gcr_region             = ""

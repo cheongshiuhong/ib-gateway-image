@@ -1,40 +1,70 @@
-import os
-import re
+import logging
 from flask import Flask
-from utils.ibgw.clients import IBGWMain
+from lib.ibgw.config import IBC_CONFIG
+from lib.ibgw.clients import TradeClient, ReconClient
+from lib.db import DbClient
 
 app = Flask(__name__)
-
-# Prepare IBC config
-with open(os.environ.get('TWS_INSTALL_LOG'), 'r') as fp:
-    INSTALL_LOG = fp.read()
-
-IBC_CONFIG = {
-    # Provided on Docker build
-    'twsVersion'     : re.search('IB Gateway ([0-9]{3})', INSTALL_LOG).group(1),
-    'gateway'        : True,
-    'ibcIni'         : os.environ.get('ibcIni'),
-    'ibcPath'        : os.environ.get('ibcPath'),
-    'javaPath'       : os.environ.get('javaPath') + f'/{os.listdir(os.environ.get("javaPath"))[0]}/bin',
-    'twsPath'        : os.environ.get('twsPath'),
-    'twsSettingsPath': os.environ.get('twsSettingsPath'),
-    
-    # Provided by Cloud Run
-    'tradingMode'    : os.environ.get('TRADING_MODE'),
-    'userid'         : os.environ.get('TWSUSERID'),
-    'password'       : os.environ.get('TWSPASSWORD')
-}
 
 @app.route('/')
 def home():
     data = {}
     return {'Test': 'It works!', 'data': data}
 
-@app.route('/test')
-def test():
+# ----------------------------------------------------
+# Test route to test if IB Gateway setup is working
+# ----------------------------------------------------
+@app.route('/test-ib')
+def test_ib():
     # Initialize
-    ibgw = IBGWMain(IBC_CONFIG)
+    client = TradeClient(IBC_CONFIG)
 
-    return ibgw.pipe([
-        lambda x: {'Success': 'Connected to IB Gateway.', **x}
-    ])
+    return client.pipe(
+        initial_state={},
+        funcs=[
+            lambda x: { 'Success': 'Connected to IB Gateway.', **x }
+        ]
+    )
+
+# ----------------------------------------------------
+# Test route to test if DB setup is working
+# ----------------------------------------------------
+@app.route('/test-db')
+def test_db():
+    # Initialize
+    client = DbClient()
+
+    return { 'Success': 'Client initalized' }
+
+# ----------------------------------------------------
+# Screen route to screen for stocks to inlcude
+# ----------------------------------------------------
+@app.route('/screen')
+def screen():
+    return {'screen': 'screen'}
+
+# ----------------------------------------------------
+# HMMW route to trade with Hidden Markov Model
+# ----------------------------------------------------
+@app.route('/trade-hmmw')
+def trade_hmmw():
+    # Initialize
+    client = TradeClient(IBC_CONFIG)
+    client.start_and_connect()
+    client.stop_and_terminate()
+
+    return { 'trade': 'hmmwtrade' }
+
+# ----------------------------------------------------
+# Reconcilate route to reconciliate account stats
+# ----------------------------------------------------
+@app.route('/reconciliate')
+def reconciliate():
+    client = ReconClient(IBC_CONFIG)
+    
+    return client.pipe(
+        initial_state={},
+        funcs=[
+            client.get_account_stats
+        ] 
+    )

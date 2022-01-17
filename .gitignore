@@ -4,7 +4,7 @@ terraform.tfstate
 terraform.tfvars
 *.tfstate*
 
-# Credentials
+# Credentials (Use for pushing to github)
 credentials.json
 
 # Python

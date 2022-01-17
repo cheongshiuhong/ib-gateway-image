@@ -10,7 +10,7 @@ terraform {
 # Google Provider
 # ------------------------------------
 provider "google" {
-  credentials = file("../credentials.json")
+  credentials = file("./credentials.json")
   project = var.project
 }
 
@@ -46,7 +46,7 @@ resource "google_cloudbuild_trigger" "cloud_build_trigger" {
     _SERVICE_NAME = var.cloud_run_service_name
   }
 
-  filename = "cloudbuild.yaml"
+  filename = "cloudbuild.yml"
 
   depends_on = [google_sourcerepo_repository.repo]
 }
@@ -62,7 +62,7 @@ resource "google_cloud_run_service" "service" {
     spec {
       containers {
         image = var.image_name
-        
+
         env {
           name = "TWS_USERID"
           value = var.tws_userid
@@ -76,6 +76,13 @@ resource "google_cloud_run_service" "service" {
         env {
           name = "TWS_TRADING_MODE"
           value = var.tws_trading_mode
+        }
+
+        resources {
+          limits = {
+            cpu    = "2000m"
+            memory = "2048Mi"
+          }
         }
       }
     }

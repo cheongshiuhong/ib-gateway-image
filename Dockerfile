@@ -42,11 +42,8 @@ RUN pip install -r requirements.txt
 # cd into home directory to setup
 WORKDIR /home
 
-# copy app
+# copy app content into base dir
 ADD ./app .
-
-# copy google credentials file for db
-COPY credentials.json credentials.json
 
 # copy entrypoint script
 COPY entrypoint.sh entrypoint.sh

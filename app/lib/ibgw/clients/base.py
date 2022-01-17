@@ -1,9 +1,12 @@
-from ib_insync import IB, IBC, util
 import logging
+from ib_insync import IB, IBC, util
 
 util.logToConsole()
 
 class IBGWBase(IB):
+    CURR = 'USD'
+    BUY = 'BUY'
+    SELL = 'SELL'
 
     def __init__(self, ibc_config, ib_config, connection_timeout, per_sleep):
         self.ibc_config = ibc_config
@@ -34,6 +37,7 @@ class IBGWBase(IB):
                 except ConnectionRefusedError:
                     if not wait:
                         logging.warning('Timeout reached')
+                        self.ibc.terminate()
                         raise TimeoutError('Could not connect to IB gateway')
         except Exception as e:
             logging.error(e)
@@ -46,7 +50,7 @@ class IBGWBase(IB):
                 logging.warning(self.ibc_config['twsPath'] + '/launcher.log not found')
             raise e
 
-    def stop_and_terminate(self, wait=0):
+    def stop_and_terminate(self, wait=1):
         """
         Closes the connection with the IB gateway and terminates it.
 
@@ -60,20 +64,21 @@ class IBGWBase(IB):
         self.sleep(wait)
         logging.info('Done.')
 
-    def pipe(self, funcs):
+    def pipe(self, initial_state={}, funcs=[]):
         """
         Runs functions sequentially
 
         :param funcs: list of functions to execute sequentially
         :returns: the output object from the last function
         """
+
         # Start and Connect
         try: self.start_and_connect()
         except TimeoutError as e: return {'Timeout Error': str(e)}
 
         # Run Functions
+        output = initial_state
         try:
-            output = {}
             for i, func in enumerate(funcs):
                 output = func(output)
         except Exception as e:
@@ -85,4 +90,3 @@ class IBGWBase(IB):
         # End Connection and Exit
         self.stop_and_terminate()
         return output
-        
